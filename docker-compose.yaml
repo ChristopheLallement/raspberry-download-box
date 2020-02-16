@@ -5,6 +5,8 @@ secrets:
     file: vpn_user.txt
  vpn_password:
     file: vpn_password.txt
+ pihole_password:
+    file: pihole_password.txt
 
 services:
   vpn:
@@ -125,6 +127,31 @@ services:
       - ${CONFIG}/plex/transcode:/transcode # temp transcoded files
       - ${TV}:/tv
       - ${MOVIES}:/movies
+      
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    network_mode: "host"   
+    environment:
+      TZ: ${TZ}
+      WEBPASSWORD: pihole_password
+    volumes:
+       - '${CONFIG}/pihole/etc-pihole/:/etc/pihole/'
+       - '${CONFIG}/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/'
+    # run `touch ./var-log/pihole.log` first unless you like errors
+    # - './var-log/pihole.log:/var/log/pihole.log'
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    secrets:
+      - pihole_password
+ 
 
   rpi-monitor:
     container_name: rpi-monitor
