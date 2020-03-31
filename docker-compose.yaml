@@ -2,23 +2,20 @@ version: '3.1'
 
 services:
   vpn:
-    env_file:
-      - ./vpn_password.env
     # todo verifier que les services passant par le vpn utilise des dns anonyme. ou bien setter les dns du raspi
     container_name: vpn
     image: bubuntux/nordvpn
+    network_mode: bridge
     cap_add:
       - net_admin
     devices:
-      - /dev/net/tun
+      - /dev/net/tun    
     environment:
-      - USER=NORDVPN_USER
-      - PASS=NORDVPN_PASSWORD
-      - COUNTRY=France
-      - PROTOCOL=UDP
-      - CATEGORY=P2P
+      - USER=
+      - PASS=
+      - CONNECT=France
+      - TECHNOLOGY=NordLynx
       - NETWORK=192.168.1.0/24
-      - OPENVPN_OPTS=--pull-filter ignore "ping-restart" --ping-exit 180
       - TZ=${TZ}
     ports:
       - 8080:80
@@ -28,7 +25,7 @@ services:
   deluge:
     container_name: deluge
     image: linuxserver/deluge
-    restart: unless-stopped
+    restart: always
     network_mode: service:vpn # run on the vpn network
     environment:
       - PUID=${PUID} # default user id, defined in .env 
