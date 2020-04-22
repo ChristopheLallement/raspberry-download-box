@@ -2,12 +2,12 @@ version: '3.1'
 
 services:
   vpn:
-    # todo verifier que les services passant par le vpn utilise des dns anonyme. ou bien setter les dns du raspi
     container_name: vpn
     image: bubuntux/nordvpn
     network_mode: bridge
     cap_add:
-      - net_admin
+      - NET_ADMIN
+      - SYS_MODULE
     devices:
       - /dev/net/tun    
     environment:
@@ -25,13 +25,14 @@ services:
   deluge:
     container_name: deluge
     image: linuxserver/deluge
-    restart: always
+    restart: unless-stopped
     network_mode: service:vpn # run on the vpn network
     environment:
       - PUID=${PUID} # default user id, defined in .env 
       - PGID=${PGID} # default group id, defined in .env
       - TZ=${TZ} # timezone, defined in .env
       - UMASK_SET=022
+      - DELUGE_LOGLEVEL=info
     volumes:
       - ${DOWNLOADS}:/downloads # downloads folder
       - ${CONFIG}/deluge:/config # config files 
@@ -65,7 +66,7 @@ services:
 #      - ${TV}:/tv # tv shows folder
 #      - ${DOWNLOADS}:/downloads # download folder
 #    ports:
-#      - 8989:8989
+#      - 8989
 
 #  radarr:
 #    image: linuxserver/radarr
@@ -96,7 +97,7 @@ services:
 #      - ${MOVIES}:/movies
 #      - ${TV}:/tv
 #    ports:
-#      - 6767:6767
+#      - 6767
 #    restart: unless-stopped
 
   plex:
@@ -121,12 +122,12 @@ services:
     image: michaelmiklis/rpi-monitor
     restart: unless-stopped
     ports:
-      - 8888:8888
+      - 8888
     devices:
       - /dev/vcsm
       - /dev/vchiq
     volumes:
- #     - ${CONFIG}/rpi-monitor:/etc/rpimonitor/
+      - ${CONFIG}/rpi-monitor:/etc/rpimonitor/
       - /opt/vc:/opt/vc/
       - /boot/:/boot/
       - /sys/:/dockerhost/sys/:ro
@@ -134,18 +135,18 @@ services:
       - /proc/:/dockerhost/proc/:ro
       - /usr/lib/:/dockerhost/usr/lib/:ro
 
-  muximux:
-    image: linuxserver/muximux
-    container_name: muximux
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - ${CONFIG}/muximux:/config
-    ports:
-      - 81:80
-    restart: unless-stopped
+#  muximux:
+#    image: linuxserver/muximux
+#    container_name: muximux
+#    environment:
+#      - PUID=${PUID}
+#      - PGID=${PGID}
+#      - TZ=${TZ}
+#    volumes:
+#      - ${CONFIG}/muximux:/config
+#    ports:
+#      - 81:80
+#    restart: unless-stopped
 
 
 #  nextcloud:
@@ -162,3 +163,28 @@ services:
 #      - 8081:80
 #    restart: unless-stopped
 
+
+#  pihole:
+#    container_name: pihole
+#    image: pihole/pihole:latest
+#    ports:
+#      - 53/tcp
+#      - 53/udp
+#      - 67/udp
+#      - 2280:80/tcp
+#      - 2443:443/tcp
+#    environment:
+#      TZ: ${TZ}
+#      WEBPASSWORD: 
+    # Volumes store your data between container upgrades
+ #   volumes:
+#       - ${CONFIG}/etc-pihole/:/etc/pihole/
+#       - ${CONFIG}/etc-dnsmasq.d/:/etc/dnsmasq.d/
+#    dns:
+#      - 127.0.0.1
+#      - 1.1.1.1
+#    # Recommended but not required (DHCP needs NET_ADMIN)
+#    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+#    cap_add:
+#      - NET_ADMIN
+#    restart: unless-stopped
