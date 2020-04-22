@@ -13,12 +13,31 @@
 | pihole      | linuxserver/pihole        | http://{ip}:2280/admin/index.php |
 
 
-## Starting
+## Configuring
+
+###  Environment variables
+Edit .env with :
+```
+TZ= time zone value (for instance Europe/Paris)
+PUID= user PUID 
+PGID= user PGID
+CONFIG= path where to store service configurations
+DOWNLOADS= landing folder for torrent client (deluge)
+MOVIES= movies library for plex
+TV= tv library for plex
+NORDVPN_USER= nordvpn user name
+NORDVPN_PASS= nordvpn password
+PIHOLE_ADMIN_PASS= pihole admin password
+```
+
+
+## Starting services
+
 ```
 docker-compose up -d
 ```
 
-## Stopping
+## Stopping services
 ```
 docker-compose down
 ```
