@@ -11,8 +11,8 @@ services:
     devices:
       - /dev/net/tun    
     environment:
-      - USER=
-      - PASS=
+      - USER=NORDVPN_USER
+      - PASS=NORDVPN_PASSWORD
       - CONNECT=France
       - TECHNOLOGY=NordLynx
       - NETWORK=192.168.1.0/24
@@ -175,7 +175,7 @@ services:
 #      - 2443:443/tcp
 #    environment:
 #      TZ: ${TZ}
-#      WEBPASSWORD: 
+#      WEBPASSWORD: PIHOLE_PASSWORD
     # Volumes store your data between container upgrades
  #   volumes:
 #       - ${CONFIG}/etc-pihole/:/etc/pihole/
