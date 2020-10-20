@@ -12,7 +12,7 @@ ufw allow from 192.168.1.0/24 to 192.168.1.82 port 5353 proto udp
 ufw allow from 192.168.1.0/24 to 192.168.1.82 port 8324 proto tcp
 
 #UDP: 32410, 32412, 32413, 32414 (for current GDM network discovery)
-ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32400 proto udp
+ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32410 proto udp
 ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32412 proto udp
 ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32413 proto udp
 ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32414 proto UDP
