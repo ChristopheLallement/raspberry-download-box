@@ -1,6 +1,9 @@
 # for access to the Plex Media Server
 ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32400 proto tcp
 
+#UDP: 1900 (for access to the Plex DLNA Server)
+ufw allow from 192.168.1.0/24 to 192.168.1.82 port 1900 proto udp
+
 #TCP: 32469 (for access to the Plex DLNA Server)
 ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32469 proto tcp
 
