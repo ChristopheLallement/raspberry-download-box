@@ -1,6 +1,8 @@
 # for access to the Plex Media Server
 ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32400 proto tcp
-#(for access to the Plex DLNA Server)
+
+#TCP: 32469 (for access to the Plex DLNA Server)
+ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32469 proto tcp
 
 #TCP: 3005 (for controlling Plex Home Theater via Plex Companion)
 ufw allow from 192.168.1.0/24 to 192.168.1.82 port 3005 proto udp
@@ -18,8 +20,6 @@ ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32413 proto udp
 ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32414 proto UDP
 
 
-#TCP: 32469 (for access to the Plex DLNA Server)
-ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32469 proto tcp
 
 
 
