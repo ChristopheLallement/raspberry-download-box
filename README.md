@@ -1,4 +1,4 @@
-# Rapsberry dowload box
+# Rapsberry download box powered by Docker
 
 | Service     | Images                    | webUI                            |
 |-------------|---------------------------|----------------------------------|
