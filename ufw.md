@@ -1,3 +1,33 @@
+
+
+/etc/ufw/applications.d/plexmediaserver
+
+[plexmediaserver]
+title=Plex Media Server (Standard)
+description=The Plex Media Server
+ports=32400/tcp|3005/tcp|5353/udp|8324/tcp|32410:32414/udp
+
+[plexmediaserver-dlna]
+title=Plex Media Server (DLNA)
+description=The Plex Media Server (additional DLNA capability only)
+ports=1900/udp|32469/tcp
+
+[plexmediaserver-all]
+title=Plex Media Server (Standard + DLNA)
+description=The Plex Media Server (with additional DLNA capability)
+ports=32400/tcp|3005/tcp|5353/udp|8324/tcp|32410:32414/udp|1900/udp|32469/tcp
+
+Once you have defined your application file tell ufw to reload the application definitions with:
+
+ufw app update plexmediaserver
+
+Use it with:
+
+ufw allow plexmediaserver-all
+
+
+
+```
 # for access to the Plex Media Server
 ufw allow from 192.168.1.0/24 to 192.168.1.82 port 32400 proto tcp
 
@@ -31,4 +61,4 @@ ufw allow from 192.168.1.0/24 to 192.168.1.82 port 58846/tcp
 ufw allow from 192.168.1.0/24 to 192.168.1.82 port 58946
 
  
- 
+ ```
