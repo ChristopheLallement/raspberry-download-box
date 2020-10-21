@@ -1,7 +1,5 @@
-
-
-/etc/ufw/applications.d/plexmediaserver
-
+`/etc/ufw/applications.d/plexmediaserver`
+```
 [plexmediaserver]
 title=Plex Media Server (Standard)
 description=The Plex Media Server
@@ -16,14 +14,17 @@ ports=1900/udp|32469/tcp
 title=Plex Media Server (Standard + DLNA)
 description=The Plex Media Server (with additional DLNA capability)
 ports=32400/tcp|3005/tcp|5353/udp|8324/tcp|32410:32414/udp|1900/udp|32469/tcp
+```
 
 Once you have defined your application file tell ufw to reload the application definitions with:
-
+```
 ufw app update plexmediaserver
+```
 
 Use it with:
-
+```
 ufw allow plexmediaserver-all
+```
 
 
 
