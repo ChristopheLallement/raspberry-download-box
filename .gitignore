@@ -1,2 +1,3 @@
 .secret.*
 vpn_password.env
+get-docker.sh

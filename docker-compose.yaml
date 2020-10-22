@@ -1,190 +1,69 @@
-version: '3.1'
+version: '2.1'
 
 services:
-  vpn:
-    container_name: vpn
-    image: bubuntux/nordvpn
-    network_mode: bridge
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    devices:
-      - /dev/net/tun    
+
+  jellyfin:
+    image: linuxserver/jellyfin:arm32v7-latest
+    container_name: jellyfin
+    network_mode: host # mandatory for the dnla
     environment:
-      - USER=NORDVPN_USER
-      - PASS=NORDVPN_PASSWORD
-      - CONNECT=France
-      - TECHNOLOGY=NordLynx
-      - NETWORK=192.168.1.0/24
-      - TZ=${TZ}
-    ports:
-      - 8080:80
-      - 8112:8112
-    restart: unless-stopped
-
-  deluge:
-    container_name: deluge
-    image: linuxserver/deluge
-    restart: unless-stopped
-    network_mode: service:vpn # run on the vpn network
-    environment:
-      - PUID=${PUID} # default user id, defined in .env 
-      - PGID=${PGID} # default group id, defined in .env
-      - TZ=${TZ} # timezone, defined in .env
-      - UMASK_SET=022
-      - DELUGE_LOGLEVEL=info
-    volumes:
-      - ${DOWNLOADS}:/downloads # downloads folder
-      - ${CONFIG}/deluge:/config # config files 
-
-  jackett:
-    container_name: jackett
-    image: linuxserver/jackett
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      - PUID=${PUID} # default user id, defined in .env
-      - PGID=${PGID} # default group id, defined in .env
-      - TZ=${TZ} # timezone, defined in .env
-    volumes:
-      - ${DOWNLOADS}/torrent-blackhole:/downloads # place where to put .torrent files for manual download
-      - ${CONFIG}/jackett:/config # config files
-
-#  sonarr:
-#    container_name: sonarr
-#    image: linuxserver/sonarr:latest
-#    restart: unless-stopped
-#    network_mode: host
-#    environment:
-#      - PUID=${PUID} # default user id, defined in .env
-#      - PGID=${PGID} # default group id, defined in .env
-#      - TZ=${TZ} # timezone, defined in .env
-#      - UMASK_SET=022 #optional
-#    volumes:
-#      - /etc/localtime:/etc/localtime:ro
-#      - ${CONFIG}/sonarr:/config # config files
-#      - ${TV}:/tv # tv shows folder
-#      - ${DOWNLOADS}:/downloads # download folder
-#    ports:
-#      - 8989
-
-#  radarr:
-#    image: linuxserver/radarr
-#    container_name: radarr
-#    network_mode: host
-#    environment:
-#      - PUID=${PUID}
-#      - PGID=${PGID}
-#      - TZ=${TZ}
-#      - UMASK_SET=022 #optional
-#    volumes:
-#      - ${CONFIG}/radarr:/config
-#      - ${MOVIES}:/movies
-#      - ${DOWNLOADS}:/downloads
-#    ports:
-#      - 7878
-
-#  bazarr:
-#    image: linuxserver/bazarr
-#    container_name: bazarr
-#    environment:
-#      - PUID=${PUID}
-#      - PGID=${PGID}
-#      - TZ=${TZ}
-#      - UMASK_SET=022 #optional
-#    volumes:
-#      - ${CONFIG}/bazarr:/config
-#      - ${MOVIES}:/movies
-#      - ${TV}:/tv
-#    ports:
-#      - 6767
-#    restart: unless-stopped
-
-  plex:
-    container_name: plex
-    image: linuxserver/plex
-    restart: unless-stopped
-    environment:
-      - TZ=${TZ} # timezone, defined in .env
       - PUID=${PUID}
       - PGID=${PGID}
-      - VERIONS=docker
-      - UMASK_SET=022
-    network_mode: host
+      - TZ=${TZ}
+      - UMASK_SET=<022> #optional
     volumes:
-      - ${CONFIG}/plex/db:/config # plex database
-      - ${CONFIG}/plex/transcode:/transcode # temp transcoded files
-      - ${TV}:/tv
-      - ${MOVIES}:/movies
-    
-  rpi-monitor:
-    container_name: rpi-monitor
-    image: michaelmiklis/rpi-monitor
-    restart: unless-stopped
+      - ${CONFIG}/jellyfin/library:/config
+      - ${TV}:/data/tvshows
+      - ${MOVIES}:/data/movies
+      - /opt/vc/lib:/opt/vc/lib #optional
     ports:
-      - 8888
-    devices:
-      - /dev/vcsm
-      - /dev/vchiq
-    volumes:
-      - ${CONFIG}/rpi-monitor:/etc/rpimonitor/
-      - /opt/vc:/opt/vc/
-      - /boot/:/boot/
-      - /sys/:/dockerhost/sys/:ro
-      - /etc/:/dockerhost/etc/:ro
-      - /proc/:/dockerhost/proc/:ro
-      - /usr/lib/:/dockerhost/usr/lib/:ro
+      - 8096:8096 # Http webUI
+      - 8920:8920 #Https webUI
+      - 7359:7359/udp #Allows clients to discover Jellyfin on the local network.
+      - 1900:1900/udp #Service discovery used by DNLA and clients.
+    #devices:
+     
+      #- /dev/vcsm:/dev/vcsm #needed if you want to use your Raspberry Pi MMAL video decoding (Enabled as OpenMax H264 decode in gui settings).
+      #- /dev/vchiq:/dev/vchiq #Only needed if you want to use your Raspberry Pi OpenMax video encoding.
+      #- /dev/video10:/dev/video10 #Only needed if you want to use your Raspberry Pi V4L2 video encoding.
+      #- /dev/video11:/dev/video11 #Only needed if you want to use your Raspberry Pi V4L2 video encoding.
+      #- /dev/video12:/dev/video12 #Only needed if you want to use your Raspberry Pi V4L2 video encoding.
+    restart: unless-stopped
 
-#  muximux:
-#    image: linuxserver/muximux
-#    container_name: muximux
-#    environment:
-#      - PUID=${PUID}
-#      - PGID=${PGID}
-#      - TZ=${TZ}
+  # plex:
+  #   container_name: plex
+  #   image: linuxserver/plex:arm32v7-latest
+  #   restart: unless-stopped
+  #   environment:
+  #     - TZ=${TZ}
+  #     - PUID=${PUID}
+  #     - PGID=${PGID}
+  #     - VERIONS=docker
+  #     - UMASK_SET=022
+  #   network_mode: host
+  #   volumes:
+  #     - ${CONFIG}/plex/db:/config # plex database
+  #     - ${CONFIG}/plex/transcode:/transcode # temp transcoded files
+  #     - ${TV}:/tv
+  #     - ${MOVIES}:/movies
+
+
+    
+#  rpi-monitor:
+#    container_name: rpi-monitor
+#    image: michaelmiklis/rpi-monitor
+#    restart: unless-stopped
+#    ports:
+#      - 8888
+#    devices:
+#      - /dev/vcsm
+#      - /dev/vchiq
 #    volumes:
-#      - ${CONFIG}/muximux:/config
-#    ports:
-#      - 81:80
-#    restart: unless-stopped
+#      - ${CONFIG}/rpi-monitor:/etc/rpimonitor/
+#      - /opt/vc:/opt/vc/
+#      - /boot/:/boot/
+#      - /sys/:/dockerhost/sys/:ro
+#      - /etc/:/dockerhost/etc/:ro
+#      - /proc/:/dockerhost/proc/:ro
+#      - /usr/lib/:/dockerhost/usr/lib/:ro
 
-
-#  nextcloud:
-#    image: linuxserver/nextcloud
-#    container_name: nextcloud
-#    environment:
-#      - PUID=${PUID}
-#      - PGID=${PGID}
-#      - TZ=${TZ}
-#    volumes:
-#      - ${CONFIG}/nextcloud:/config
-#      - ${SHARE}/sdd:/data
-#    ports:
-#      - 8081:80
-#    restart: unless-stopped
-
-
-#  pihole:
-#    container_name: pihole
-#    image: pihole/pihole:latest
-#    ports:
-#      - 53/tcp
-#      - 53/udp
-#      - 67/udp
-#      - 2280:80/tcp
-#      - 2443:443/tcp
-#    environment:
-#      TZ: ${TZ}
-#      WEBPASSWORD: PIHOLE_PASSWORD
-    # Volumes store your data between container upgrades
- #   volumes:
-#       - ${CONFIG}/etc-pihole/:/etc/pihole/
-#       - ${CONFIG}/etc-dnsmasq.d/:/etc/dnsmasq.d/
-#    dns:
-#      - 127.0.0.1
-#      - 1.1.1.1
-#    # Recommended but not required (DHCP needs NET_ADMIN)
-#    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
-#    cap_add:
-#      - NET_ADMIN
-#    restart: unless-stopped
