@@ -5,7 +5,7 @@ services:
   jellyfin:
     image: linuxserver/jellyfin:arm32v7-latest
     container_name: jellyfin
-    network_mode: host # mandatory for the dnla
+    network_mode: "host" # mandatory for the dlna
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -17,10 +17,11 @@ services:
       - ${MOVIES}:/data/movies
       - /opt/vc/lib:/opt/vc/lib #optional
     ports:
+
       - 8096:8096 # Http webUI
       - 8920:8920 #Https webUI
       - 7359:7359/udp #Allows clients to discover Jellyfin on the local network.
-      - 1900:1900/udp #Service discovery used by DNLA and clients.
+      - 1900:1900 #Service discovery used by DNLA and clients.
     #devices:
      
       #- /dev/vcsm:/dev/vcsm #needed if you want to use your Raspberry Pi MMAL video decoding (Enabled as OpenMax H264 decode in gui settings).
