@@ -4,13 +4,7 @@
 |-------------|---------------------------|----------------------------------|
 | nordvpn     | bubuntux/nordvpn          |                                  |
 | deluge      | linuxserver/deluge        | http://{ip}:8112                 |
-| jackett     | linuxserver/jackett       | http://{ip}:9117                 |
-| sonarr      |                           |                                  |
-| radarr      | linuxserver/sonarr        | http://{ip}:8989                 |
-| bazarr      | linuxserver/bazarr        | http://{ip}:7878                 |
-| plex        | linuxserver/plex          | http://{ip}:32400                |
-| rpi-monitor | michaelmiklis/rpi-monitor | http://{ip}:8888                 |
-| pihole      | linuxserver/pihole        | http://{ip}:2280/admin/index.php |
+| jellyfin    | jellyfin/jellyfin         | http://{ip}:8096                 |
 
 
 # Install Docker and docker compose for 32-bit raspberry pi
@@ -72,7 +66,6 @@ PIHOLE_ADMIN_PASS= pihole admin password
 ```
 
 ## Starting download-box
-
 ```
 docker-compose up -d
 ```
@@ -87,3 +80,17 @@ docker-compose down
 docker-compose pull && docker-compose up -d --remove-orphans  && docker image prune
 ```
 
+## Firewall
+```
+sudo ufw enable
+sudo ufw status verbose
+sudo ufw status numbered
+
+#deluge
+sudo ufw allow from 192.168.1.0/24 to 192.168.1.82 port 8112/tcp
+
+#jellyfin
+sudo ufw allow from 192.168.1.0/24 to 192.168.1.82 port 8096/tcp  # HTTP traffic
+sudo ufw allow from 192.168.1.0/24 to 192.168.1.82 port 1900/udp  # for service auto-discovery/DLNA
+sudo ufw allow from 192.168.1.0/24 to 192.168.1.82 port 7359/udp  # for service auto-discovery/DLNA
+```
