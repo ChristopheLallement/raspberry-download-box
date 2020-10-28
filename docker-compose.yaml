@@ -1,70 +1,32 @@
-version: '2.1'
+version: '3'
 
 services:
-
-  jellyfin:
-    image: linuxserver/jellyfin:arm32v7-latest
-    container_name: jellyfin
-    network_mode: "host" # mandatory for the dlna
+  deluge:
+    image: linuxserver/deluge
+    container_name: deluge
+    network_mode: host
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - UMASK_SET=<022> #optional
+      - UMASK_SET=022 #optional
+      - DELUGE_LOGLEVEL=error #optional
     volumes:
-      - ${CONFIG}/jellyfin/library:/config
-      - ${TV}:/data/tvshows
-      - ${MOVIES}:/data/movies
-      - /opt/vc/lib:/opt/vc/lib #optional
-    ports:
-
-      - 8096:8096 # Http webUI
-      - 8920:8920 #Https webUI
-      - 7359:7359/udp #Allows clients to discover Jellyfin on the local network.
-      - 1900:1900 #Service discovery used by DNLA and clients.
-    #devices:
-     
-      #- /dev/vcsm:/dev/vcsm #needed if you want to use your Raspberry Pi MMAL video decoding (Enabled as OpenMax H264 decode in gui settings).
-      #- /dev/vchiq:/dev/vchiq #Only needed if you want to use your Raspberry Pi OpenMax video encoding.
-      #- /dev/video10:/dev/video10 #Only needed if you want to use your Raspberry Pi V4L2 video encoding.
-      #- /dev/video11:/dev/video11 #Only needed if you want to use your Raspberry Pi V4L2 video encoding.
-      #- /dev/video12:/dev/video12 #Only needed if you want to use your Raspberry Pi V4L2 video encoding.
+      - ${CONFIG}/deluge:/config
+      - ${DOWNLOADS}:/downloads
     restart: unless-stopped
 
-  # plex:
-  #   container_name: plex
-  #   image: linuxserver/plex:arm32v7-latest
-  #   restart: unless-stopped
-  #   environment:
-  #     - TZ=${TZ}
-  #     - PUID=${PUID}
-  #     - PGID=${PGID}
-  #     - VERIONS=docker
-  #     - UMASK_SET=022
-  #   network_mode: host
-  #   volumes:
-  #     - ${CONFIG}/plex/db:/config # plex database
-  #     - ${CONFIG}/plex/transcode:/transcode # temp transcoded files
-  #     - ${TV}:/tv
-  #     - ${MOVIES}:/movies
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    user: ${PUID}:${PGID}
+    network_mode: "host"
+    volumes:
+      - ${CONFIG}/jellyfin:/config
+      - ${CONFIG}/jellyfin/cache:/cache      
+      - ${MOVIES}:/movies
+      - ${TV}:/tv
+    restart: "unless-stopped"
 
-
-    
-#  rpi-monitor:
-#    container_name: rpi-monitor
-#    image: michaelmiklis/rpi-monitor
-#    restart: unless-stopped
-#    ports:
-#      - 8888
-#    devices:
-#      - /dev/vcsm
-#      - /dev/vchiq
-#    volumes:
-#      - ${CONFIG}/rpi-monitor:/etc/rpimonitor/
-#      - /opt/vc:/opt/vc/
-#      - /boot/:/boot/
-#      - /sys/:/dockerhost/sys/:ro
-#      - /etc/:/dockerhost/etc/:ro
-#      - /proc/:/dockerhost/proc/:ro
-#      - /usr/lib/:/dockerhost/usr/lib/:ro
-
+  
+  
