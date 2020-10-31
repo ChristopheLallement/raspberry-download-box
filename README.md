@@ -5,6 +5,10 @@
 | nordvpn     | bubuntux/nordvpn          |                                  |
 | deluge      | linuxserver/deluge        | http://{ip}:8112                 |
 | jellyfin    | jellyfin/jellyfin         | http://{ip}:8096                 |
+| ubooquity   | linuxserver/ubooquity     | http://{ip}:2203/ubooquity/admin |
+| ubooquity   | linuxserver/ubooquity     | http://{ip}:2202/ubooquity |
+
+
 
 
 # Install Docker and docker compose for 32-bit raspberry pi

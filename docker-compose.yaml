@@ -28,5 +28,22 @@ services:
       - ${TV}:/tv
     restart: "unless-stopped"
 
-  
+
+  ubooquity:
+    image: linuxserver/ubooquity
+    container_name: ubooquity
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - MAXMEM=300
+    volumes:
+      - ${CONFIG}/ubooquity:/config
+      - ${BOOKS}:/books
+      - ${COMICS}:/comics
+      - ${UBOOQUITY_RAW}:/files
+    ports:
+      - 2202:2202
+      - 2203:2203
+    restart: unless-stopped
   
